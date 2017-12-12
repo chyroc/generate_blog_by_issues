@@ -1,23 +1,39 @@
 package internal
 
+import "time"
+
 type issue struct {
+	Title      string
+	Body       string
+	CreateTime time.Time
 }
 
-func getIssuesPage(repo string) int {
-	return 0
+func getIssuesPage(repo string) (int, error) {
+	return 0, nil
 }
 
-func getIssuesByPage(repo string, page int) []*issue {
-	return make([]*issue, 0)
+func getIssuesByPage(repo string, page int) ([]*issue, error) {
+	return make([]*issue, 0), nil
 }
 
-func getAllIssues(repo string) []*issue {
+func getAllIssues(repo string) ([]*issue, error) {
 	issues := make([]*issue, 0)
-	for i, j := 0, getIssuesPage(repo); i < j; i++ {
-		issues = append(issues, getIssuesByPage(repo, i+1)...)
+
+	page, err := getIssuesPage(repo)
+	if err != nil {
+		return nil, err
 	}
 
-	return issues
+	for i := 0; i < page; i++ {
+		newIssues, err := getIssuesByPage(repo, i+1)
+		filterIssues(newIssues)
+		if err != nil {
+			return nil, err
+		}
+		issues = append(issues, newIssues...)
+	}
+
+	return issues, nil
 }
 
 func filterIssues(issues []*issue) {
