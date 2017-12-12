@@ -3,8 +3,8 @@ package internal
 import (
 	"encoding/json"
 	"io/ioutil"
-	"time"
 	"strconv"
+	"time"
 )
 
 func formatTime(t time.Time) string {

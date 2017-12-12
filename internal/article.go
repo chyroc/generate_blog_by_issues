@@ -2,7 +2,7 @@ package internal
 
 import (
 	"log"
-	"time"
+	"strconv"
 )
 
 var (
@@ -64,8 +64,8 @@ var (
 `
 )
 
-func formatFileNmae(createdAt time.Time) string {
-	return "articles/" + formatTime(createdAt) + ".html"
+func formatFileNmae(i issue) string {
+	return "articles/" + formatTime(i.CreatedAt) + "-" + strconv.Itoa(i.ID) + ".html"
 }
 
 func (g *generateBlog) saveArticle(issues []issue) {
@@ -81,7 +81,7 @@ func (g *generateBlog) saveArticle(issues []issue) {
 				log.Fatal(err)
 			}
 
-			if err := saveFile(formatFileNmae(i.CreatedAt), html); err != nil {
+			if err := saveFile(formatFileNmae(i), html); err != nil {
 				log.Fatal(err)
 			}
 		}(i)
