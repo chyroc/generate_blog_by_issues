@@ -11,12 +11,11 @@ func formatFileNmae(createdAt time.Time) string {
 }
 
 func (g *generateBlog) saveArticle(issues []issue) {
-	for k := range issues {
-		log.Printf("start fetch %s\n", issues[k].Title)
-	}
 
 	for _, i := range issues {
 		go func(i issue) {
+			log.Printf("start fetch %s\n", i.Title)
+
 			defer g.wg.Done()
 
 			html, err := parseToHTML(i.Body, g.token)
@@ -24,7 +23,6 @@ func (g *generateBlog) saveArticle(issues []issue) {
 				log.Fatal(err)
 			}
 
-			i.CreatedAt.Year()
 			if err := saveFile(formatFileNmae(i.CreatedAt), html); err != nil {
 				log.Fatal(err)
 			}
