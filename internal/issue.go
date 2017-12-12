@@ -1,10 +1,10 @@
 package internal
 
 import (
-	"time"
-	"strings"
 	"encoding/json"
 	"strconv"
+	"strings"
+	"time"
 )
 
 type labels struct {
@@ -23,17 +23,9 @@ type issue struct {
 }
 
 func formatRepo(repo string) string {
-	if strings.HasPrefix(repo, "https://github.com") {
-		repo = strings.TrimLeft(repo, "https://github.com")
-	}
-
-	if strings.HasPrefix(repo, "http://github.com") {
-		repo = strings.TrimLeft(repo, "http://github.com")
-	}
-
-	if strings.HasPrefix(repo, "github.com") {
-		repo = strings.TrimLeft(repo, "github.com")
-	}
+	repo = strings.TrimPrefix(repo, "https://")
+	repo = strings.TrimPrefix(repo, "http://")
+	repo = strings.TrimPrefix(repo, "github.com")
 
 	return "https://api.github.com/repos/" + repo + "/issues"
 }

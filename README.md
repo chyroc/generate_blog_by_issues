@@ -1,7 +1,6 @@
 # generate_blog_by_issues
 
 [![Build Status](https://travis-ci.org/Chyroc/generate_blog_by_issues.svg?branch=master)](https://travis-ci.org/Chyroc/generate_blog_by_issues)
-[![Coverage Status](https://coveralls.io/repos/github/Chyroc/generate_blog_by_issues/badge.svg)](https://coveralls.io/github/Chyroc/generate_blog_by_issues)
 
 # install
 ```

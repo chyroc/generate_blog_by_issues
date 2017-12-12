@@ -16,7 +16,6 @@
     "safesql",
     "structcheck",
     "unconvert",
-    "unparam",
     "varcheck",
     "vet"
   ],
