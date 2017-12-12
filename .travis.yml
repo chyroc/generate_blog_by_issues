@@ -14,3 +14,8 @@ before_install:
 script:
   - gometalinter --config=test/golint_config.json ./...
   - goveralls -service=travis-ci
+
+notifications:
+  email:
+    on_success: never
+    on_failure: never

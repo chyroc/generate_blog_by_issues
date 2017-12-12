@@ -2,7 +2,7 @@ package internal
 
 import "log"
 
-// Run fetch issue and generate blog
+// Run fetch issues and generate blog
 func Run(repo string) {
 	issues, err := getAllIssues(repo)
 	if err != nil {
