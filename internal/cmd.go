@@ -30,7 +30,7 @@ func Run(repo, token string) {
 
 	g.wg.Add(len(issues))
 	g.saveArticle(issues)
-	//saveTag(issues)
+	g.saveTag(issues)
 
 	g.wg.Wait()
 }

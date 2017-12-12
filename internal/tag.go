@@ -1,5 +1,4 @@
 package internal
 
-func saveTag(issues []*issue) {
-	return
+func (g *generateBlog) saveTag(issues []issue) {
 }
