@@ -3,21 +3,37 @@ package internal
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 )
 
-func convertIssueToList(i issue) string {
+func convertIssueToList(i issue, config conf) string {
 	labels := ""
 	for _, l := range i.Labels {
 		labels += fmt.Sprintf(" [#%s]()", l.Name)
 	}
-	return fmt.Sprintf("### %s\n- [%s](%s)%s\n", formatTime(i.CreatedAt), i.Title, "http://blog.chyroc.cn/"+formatFileNmae(i), labels)
+	return fmt.Sprintf("\n### %s\n- [%s](http://%s)%s\n", formatTime(i.CreatedAt), i.Title, config.Host+"/"+formatFileNmae(i), labels)
+}
+
+func convertBlogrollList(bs []blogroll) string {
+	blogroll := ""
+	for _, b := range bs {
+		blogroll += fmt.Sprintf("\n- [%s](%s)", b.Name, b.URL)
+	}
+	return blogroll
 }
 
 func (g *generateBlog) saveReadme(issues []issue) {
-	readme := "Chyroc Blog\n> created by issue\n"
+	readme := fmt.Sprintf("%s\n> created by issue\n\n", g.config.Name)
 	for _, i := range issues {
-		readme += convertIssueToList(i)
+		readme += convertIssueToList(i, g.config)
 	}
 
-	ioutil.WriteFile("README.md", []byte(readme), 0644)
+	blogroll := convertBlogrollList(g.config.Blogrolls)
+
+	readme, err := parseToReadme(readme, blogroll, g.token, g.config)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ioutil.WriteFile("index.html", []byte(readme), 0644)
 }

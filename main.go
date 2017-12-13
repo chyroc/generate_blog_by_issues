@@ -3,15 +3,17 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 
 	"github.com/Chyroc/generate_blog_by_issues/internal"
 )
 
-func getCommandLine() (string, string) {
+func getCommandLine() (string, string, []byte) {
 	repo := flag.String("repo", "", "where the repo is")
 	token := flag.String("token", "", "github token")
+	config := flag.String("config", "", "json config file")
 	v := flag.Bool("v", false, "generate_blog_by_issues version")
 	flag.Parse()
 
@@ -26,11 +28,18 @@ func getCommandLine() (string, string) {
 	if *token == "" {
 		log.Fatal("must set github token")
 	}
+	if *config == "" {
+		log.Fatal("must set json config file")
+	}
+	file, err := ioutil.ReadFile(*config)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	return *repo, *token
+	return *repo, *token, file
 }
 
 func main() {
-	repo, token := getCommandLine()
-	internal.Run(repo, token)
+	repo, token, config := getCommandLine()
+	internal.Run(repo, token, config)
 }
