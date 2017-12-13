@@ -17,7 +17,7 @@ func convertIssueToList(i issue, config conf) string {
 func convertBlogrollList(bs []blogroll) string {
 	blogroll := ""
 	for _, b := range bs {
-		blogroll += fmt.Sprintf("\n- [%s](%s)", b.Name, b.Url)
+		blogroll += fmt.Sprintf("\n- [%s](%s)", b.Name, b.URL)
 	}
 	return blogroll
 }

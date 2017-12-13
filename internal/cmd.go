@@ -1,9 +1,9 @@
 package internal
 
 import (
+	"encoding/json"
 	"log"
 	"sync"
-	"encoding/json"
 )
 
 type generateBlog struct {

@@ -12,7 +12,7 @@ import (
 
 type blogroll struct {
 	Name string `json:"name"`
-	Url  string `json:"url"`
+	URL  string `json:"url"`
 }
 
 type conf struct {
