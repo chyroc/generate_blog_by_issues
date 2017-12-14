@@ -4,14 +4,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"strconv"
 )
 
 func convertIssueToList(i issue, config conf) string {
-	labels := ""
-	for _, l := range i.Labels {
-		labels += fmt.Sprintf(" [#%s]()", l.Name)
-	}
-	return fmt.Sprintf("\n### %s\n- [%s](http://%s)%s\n", formatTime(i.CreatedAt), i.Title, config.Host+"/"+formatFileNmae(i), labels)
+	return fmt.Sprintf("\n- [%s](http://%s)\n", i.Title, config.Host+"/"+formatFileNmae(i))
 }
 
 func convertBlogrollList(bs []blogroll) string {
@@ -22,10 +19,37 @@ func convertBlogrollList(bs []blogroll) string {
 	return blogroll
 }
 
+func groupIssues(issues []issue) [][]issue {
+	if len(issues) == 0 {
+		log.Fatal("must have one issue")
+	}
+
+	var is [][]issue
+	var currentIssues []issue
+	var currentTime = strconv.Itoa(issues[0].CreatedAt.Year()) + "-" + strconv.Itoa(int(issues[0].CreatedAt.Month()))
+	for _, i := range issues {
+		t := strconv.Itoa(i.CreatedAt.Year()) + "-" + strconv.Itoa(int(i.CreatedAt.Month()))
+		if t == currentTime {
+			currentIssues = append(currentIssues, i)
+		} else {
+			currentTime = t
+			is = append(is, currentIssues)
+			currentIssues = []issue{i}
+		}
+	}
+	is = append(is, currentIssues)
+	return is
+}
+
 func (g *generateBlog) saveReadme(issues []issue) {
 	readme := fmt.Sprintf("%s\n> created by issue\n\n", g.config.Name)
-	for _, i := range issues {
-		readme += convertIssueToList(i, g.config)
+
+	groupIss := groupIssues(issues)
+	for _, iss := range groupIss {
+		readme += fmt.Sprintf("\n### %s", strconv.Itoa(iss[0].CreatedAt.Year())+"-"+strconv.Itoa(int(iss[0].CreatedAt.Month())))
+		for _, i := range iss {
+			readme += convertIssueToList(i, g.config)
+		}
 	}
 
 	blogroll := convertBlogrollList(g.config.Blogrolls)
