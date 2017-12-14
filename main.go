@@ -10,6 +10,8 @@ import (
 	"github.com/Chyroc/generate_blog_by_issues/internal"
 )
 
+var version = "v0.1.0"
+
 func getCommandLine() (string, string, []byte) {
 	repo := flag.String("repo", "", "where the repo is")
 	token := flag.String("token", "", "github token")
@@ -18,7 +20,7 @@ func getCommandLine() (string, string, []byte) {
 	flag.Parse()
 
 	if *v {
-		fmt.Printf("generate_blog_by_issues 0.1.0\n")
+		fmt.Printf("generate_blog_by_issues %s\n", version)
 		os.Exit(0)
 	}
 
