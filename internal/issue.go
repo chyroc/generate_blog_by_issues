@@ -2,11 +2,11 @@ package internal
 
 import (
 	"encoding/json"
+	"io/ioutil"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
-	"regexp"
-	"io/ioutil"
 )
 
 type labels struct {
