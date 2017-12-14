@@ -10,7 +10,6 @@ type generateBlog struct {
 	repo   string
 	token  string
 	config conf
-	issues [][]issue
 	wg     *sync.WaitGroup
 }
 
@@ -38,7 +37,7 @@ func Run(repo, token string, configfile []byte) {
 
 	g.wg.Add(len(issues))
 	g.saveArticle(issues)
-	//g.saveTag(issues)
+	g.saveTag(issues)
 	g.saveReadme(issues)
 
 	g.wg.Wait()
