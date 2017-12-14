@@ -10,9 +10,9 @@ func formatFileNmae(i issue) string {
 }
 
 func (g *generateBlog) saveArticle(issues []issue) {
-	for _, i := range issues {
-		go func(i issue) {
-			log.Printf("start fetch %s\n", i.Title)
+	for k, i := range issues {
+		go func(k int, i issue) {
+			log.Printf("start fetch %d: %s\n", k, i.Title)
 
 			defer g.wg.Done()
 
@@ -24,6 +24,6 @@ func (g *generateBlog) saveArticle(issues []issue) {
 			if err := saveFile(formatFileNmae(i), html); err != nil {
 				log.Fatal(err)
 			}
-		}(i)
+		}(k, i)
 	}
 }

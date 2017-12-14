@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func get(url, token string, queryString map[string]string) ([]byte, error) {
+func get(url, token string, queryString map[string]string) (*http.Response, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
@@ -22,20 +22,8 @@ func get(url, token string, queryString map[string]string) ([]byte, error) {
 	req.Header.Set("Authorization", "token "+token)
 
 	client := &http.Client{Timeout: time.Second * 10}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
 
-	buf, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	// link todo
-
-	return buf, nil
+	return client.Do(req)
 }
 
 func post(url, token string, body []byte) ([]byte, error) {
