@@ -1,5 +1,13 @@
 # Change Log
 
+## [v0.2.1](https://github.com/Chyroc/generate_blog_by_issues/tree/v0.2.1) (2018-01-24)
+[Full Changelog](https://github.com/Chyroc/generate_blog_by_issues/compare/v0.1.0...v0.2.1)
+
+**Merged pull requests:**
+
+- remove disqus [\#9](https://github.com/Chyroc/generate_blog_by_issues/pull/9) ([Chyroc](https://github.com/Chyroc))
+- Release/v0.1.0 [\#8](https://github.com/Chyroc/generate_blog_by_issues/pull/8) ([Chyroc](https://github.com/Chyroc))
+
 ## [v0.1.0](https://github.com/Chyroc/generate_blog_by_issues/tree/v0.1.0) (2017-12-14)
 **Merged pull requests:**
 
