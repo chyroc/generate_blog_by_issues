@@ -21,28 +21,12 @@ const headerTmpl = `
 `
 
 const articleTmpl = headerTmpl + `
-<link href="http://{{ .Host }}/assets/css/style.css?v=305ca492b034089b2a2287dae4e9fa13ac15b666" rel="stylesheet">
+<link href="http://{{ .Host }}/assets/css/style.css" rel="stylesheet">
 </head>
 <body>
 <div class="container-lg px-3 my-5 markdown-body">
 
 {{ .Content }}
-
-<script src="http://{{ .Host }}/assets/javascript/anchor-js/anchor.min.js"></script>
-<script>anchors.add();</script>
-
-<div id="disqus_thread"></div>
-<script>
-(function () { // DON'T EDIT BELOW THIS LINE
-var d = document, s = d.createElement('script')
-s.src = 'https://chyroc.disqus.com/embed.js'
-s.setAttribute('data-timestamp', +new Date());
-(d.head || d.body).appendChild(s)
-})()
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
-Disqus.</a></noscript>
-<script id="dsq-count-scr" src="//chyroc.disqus.com/count.js" async></script>
 
 </div>
 
@@ -92,7 +76,7 @@ function openCity(evt, cityName) {
     evt.currentTarget.className += " active";
 }
 </script>
-<link href="http://{{ .Host }}/assets/css/style.css?v=305ca492b034089b2a2287dae4e9fa13ac15b666" rel="stylesheet">
+<link href="http://{{ .Host }}/assets/css/style.css" rel="stylesheet">
 </head>
 <body>
 <div class="container-lg px-3 my-5 markdown-body">

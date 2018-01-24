@@ -13,9 +13,9 @@ type generateBlog struct {
 	wg     *sync.WaitGroup
 }
 
-func newBlog(repo, token string, configfile []byte) *generateBlog {
+func newBlog(repo, token string, configFile []byte) *generateBlog {
 	var config conf
-	if err := json.Unmarshal(configfile, &config); err != nil {
+	if err := json.Unmarshal(configFile, &config); err != nil {
 		log.Fatal(err)
 	}
 	return &generateBlog{
@@ -27,8 +27,8 @@ func newBlog(repo, token string, configfile []byte) *generateBlog {
 }
 
 // Run fetch issues and generate blog
-func Run(repo, token string, configfile []byte) {
-	g := newBlog(repo, token, configfile)
+func Run(repo, token string, configFile []byte) {
+	g := newBlog(repo, token, configFile)
 
 	issues, err := g.getAllIssues()
 	if err != nil {
