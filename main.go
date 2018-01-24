@@ -10,7 +10,7 @@ import (
 	"github.com/Chyroc/generate_blog_by_issues/internal"
 )
 
-var version = "v0.1.0"
+var version = "v0.2.0"
 
 func getCommandLine() (string, string, []byte) {
 	repo := flag.String("repo", "", "where the repo is")
