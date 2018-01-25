@@ -60,7 +60,7 @@ func (n noteImpl) download(path string) (*content, error) {
 
 func (n noteImpl) analysisNote(c *content) (*article, error) {
 	article := &article{
-		ID: cencodeBase64(c.Name),
+		ID: encodeBase64(c.Name),
 	}
 
 	note, err := decodeBase64(c.Content)
