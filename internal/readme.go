@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"sort"
 	"strconv"
 )
 
@@ -19,15 +20,29 @@ func convertBlogrollList(bs []blogroll) string {
 	return blogroll
 }
 
-func groupIssues(issues []article) [][]article {
-	if len(issues) == 0 {
+type articleSlice []article
+
+func (c articleSlice) Len() int {
+	return len(c)
+}
+func (c articleSlice) Swap(i, j int) {
+	c[i], c[j] = c[j], c[i]
+}
+func (c articleSlice) Less(i, j int) bool {
+	return c[j].CreatedAt.Before(c[i].CreatedAt)
+}
+
+func groupArticles(articles []article) [][]article {
+	if len(articles) == 0 {
 		log.Fatal("must have one issue")
 	}
 
+	sort.Sort(articleSlice(articles))
+
 	var is [][]article
 	var currentIssues []article
-	var currentTime = strconv.Itoa(issues[0].CreatedAt.Year()) + "-" + strconv.Itoa(int(issues[0].CreatedAt.Month()))
-	for _, i := range issues {
+	var currentTime = strconv.Itoa(articles[0].CreatedAt.Year()) + "-" + strconv.Itoa(int(articles[0].CreatedAt.Month()))
+	for _, i := range articles {
 		t := strconv.Itoa(i.CreatedAt.Year()) + "-" + strconv.Itoa(int(i.CreatedAt.Month()))
 		if t == currentTime {
 			currentIssues = append(currentIssues, i)
@@ -41,10 +56,10 @@ func groupIssues(issues []article) [][]article {
 	return is
 }
 
-func (g *generateBlog) saveReadme(issues []article) {
+func (g *generateBlog) saveReadme(articles []article) {
 	readme := fmt.Sprintf("%s\n> created by issue\n\n", g.config.Name)
 
-	groupIss := groupIssues(issues)
+	groupIss := groupArticles(articles)
 	for _, iss := range groupIss {
 		readme += fmt.Sprintf("\n### %s", strconv.Itoa(iss[0].CreatedAt.Year())+"-"+strconv.Itoa(int(iss[0].CreatedAt.Month())))
 		for _, i := range iss {
