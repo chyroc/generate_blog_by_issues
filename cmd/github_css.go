@@ -2,24 +2,27 @@
 package main
 
 import (
-	"io/ioutil"
 	"encoding/json"
 	"fmt"
-
-	"github.com/Chyroc/generate_blog_by_issues/internal"
+	"io/ioutil"
+	"net/http"
 )
 
 var cssSourceURL = "https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/%s/github-markdown.min.css"
 var cssVersionURL = "https://api.cdnjs.com/libraries/github-markdown-css"
 
-func getLastestVersion() (string, error) {
-	resp, err := internal.Get(cssVersionURL, "", nil)
+func get(url string) ([]byte, error) {
+	resp, err := http.Get(url)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	return ioutil.ReadAll(resp.Body)
+}
+
+func getLastestVersion() (string, error) {
+	body, err := get(cssVersionURL)
 	if err != nil {
 		return "", err
 	}
@@ -41,14 +44,7 @@ func downCSS() error {
 		return err
 	}
 
-	resp, err := internal.Get(fmt.Sprintf(cssSourceURL, version), "", nil)
-	if err != nil {
-		return err
-	}
-
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := get(fmt.Sprintf(cssSourceURL, version))
 	if err != nil {
 		return err
 	}

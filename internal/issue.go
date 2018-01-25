@@ -36,7 +36,7 @@ func formatRepo(repo string) string {
 
 func getIssuesByPage(repo string, page int, token string) ([]issue, error) {
 	repo = formatRepo(repo)
-	resp, err := Get(repo, token, map[string]string{"state": "open", "page": strconv.Itoa(page), "per_page": "25"})
+	resp, err := get(repo, token, map[string]string{"state": "open", "page": strconv.Itoa(page), "per_page": "25"})
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func getIssuesPage(repo, token string) (int, error) {
 	page := 1
 
 	repo = formatRepo(repo)
-	resp, err := Get(repo, token, map[string]string{"state": "open", "page": strconv.Itoa(1), "per_page": "25"})
+	resp, err := get(repo, token, map[string]string{"state": "open", "page": strconv.Itoa(1), "per_page": "25"})
 	if err != nil {
 		return page, err
 	}
