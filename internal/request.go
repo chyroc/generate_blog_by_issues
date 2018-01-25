@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func get(url, token string, queryString map[string]string) (*http.Response, error) {
+func Get(url, token string, queryString map[string]string) (*http.Response, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err

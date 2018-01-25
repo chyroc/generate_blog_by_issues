@@ -15,3 +15,4 @@
 .idea/
 internal/assets.go
 dist
+assets/github_markdown.css
