@@ -1,5 +1,17 @@
 # Change Log
 
+## [v0.3.0](https://github.com/Chyroc/generate_blog_by_issues/tree/HEAD)
+
+[Full Changelog](https://github.com/Chyroc/generate_blog_by_issues/compare/v0.2.1...HEAD)
+
+**Merged pull requests:**
+
+- add get-article-title [\#14](https://github.com/Chyroc/generate_blog_by_issues/pull/14) ([Chyroc](https://github.com/Chyroc))
+- fix sort-and-group [\#13](https://github.com/Chyroc/generate_blog_by_issues/pull/13) ([Chyroc](https://github.com/Chyroc))
+- add article-from-repo-and-path [\#12](https://github.com/Chyroc/generate_blog_by_issues/pull/12) ([Chyroc](https://github.com/Chyroc))
+- add github-markdown-css [\#11](https://github.com/Chyroc/generate_blog_by_issues/pull/11) ([Chyroc](https://github.com/Chyroc))
+- Release/0.2.1 [\#10](https://github.com/Chyroc/generate_blog_by_issues/pull/10) ([Chyroc](https://github.com/Chyroc))
+
 ## [v0.2.1](https://github.com/Chyroc/generate_blog_by_issues/tree/v0.2.1) (2018-01-24)
 [Full Changelog](https://github.com/Chyroc/generate_blog_by_issues/compare/v0.1.0...v0.2.1)
 
