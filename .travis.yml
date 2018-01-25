@@ -8,12 +8,18 @@ go:
 before_install:
   - go get github.com/mattn/goveralls
   - go get -u github.com/alecthomas/gometalinter
+  - go get -u github.com/jteeuwen/go-bindata/...
   - gometalinter --install
-  - go test -i $(go list ./... | grep -v /vendor)
 
 script:
+# lint
   - gometalinter --config=test/golint_config.json ./...
   - goveralls -service=travis-ci
+#  test
+  - go run cmd/github_css.go
+  - go generate cmd/github_css.go
+  - go build main.go
+  - go test -i $(go list ./... | grep -v /vendor)
 
 notifications:
   email:

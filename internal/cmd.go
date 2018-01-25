@@ -39,5 +39,7 @@ func Run(repo, token string, configFile []byte) {
 	g.saveArticle(issues)
 	g.saveReadme(issues)
 
+	createAssets()
+
 	g.wg.Wait()
 }
