@@ -12,7 +12,7 @@ type generateBlog struct {
 	config conf
 
 	issueImpl issueImpl
-	noteImpls []note
+	noteImpls []noteImpl
 
 	wg *sync.WaitGroup
 }
@@ -23,9 +23,9 @@ func newBlog(repo, token string, configFile []byte) *generateBlog {
 		log.Fatal(err)
 	}
 
-	var ns []note
+	var ns []noteImpl
 	for _, v := range config.Notes {
-		ns = append(ns, note{
+		ns = append(ns, noteImpl{
 			Repo:  v.Repo,
 			Token: token,
 			Paths: v.Paths,

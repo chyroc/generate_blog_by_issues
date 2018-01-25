@@ -27,14 +27,14 @@ func TestNote(t *testing.T) {
 	as := assert.New(t)
 
 	{
-		n := note{}
+		n := noteImpl{}
 		a, err := n.analysisNote(&content{Name: "name", Content: "IyDmoIfpopgKCi0gdGltZSAyMDE4LTAxLTI1"})
 		as.Nil(err)
 		as.NotNil(a)
 	}
 
 	{
-		n := note{
+		n := noteImpl{
 			Repo:  "Chyroc/notes",
 			Paths: []string{"Language/Go/goquiz.github.io/defer-return.md"},
 		}

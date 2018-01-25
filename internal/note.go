@@ -15,18 +15,24 @@ type note struct {
 
 	Token string `json:"-"`
 }
-
 type content struct {
 	Name    string `json:"name"`
 	Content string `json:"content"`
 	Message string `json:"message"`
 }
 
+type noteImpl struct {
+	Repo  string   `json:"repo"`
+	Paths []string `json:"paths"`
+
+	Token string `json:"-"`
+}
+
 func repoToContentURL(repo, path string) string {
 	return "https://api.github.com/repos/" + linkToGithubRepoName(repo) + "/contents/" + path
 }
 
-func (n note) download(path string) (*content, error) {
+func (n noteImpl) download(path string) (*content, error) {
 	url := repoToContentURL(n.Repo, path)
 	resp, err := get(url, n.Token, nil)
 	if err != nil {
@@ -52,7 +58,7 @@ func (n note) download(path string) (*content, error) {
 	return &r, nil
 }
 
-func (n note) analysisNote(c *content) (*article, error) {
+func (n noteImpl) analysisNote(c *content) (*article, error) {
 	note, err := decodeBase64(c.Content)
 	if err != nil {
 		return nil, err
@@ -79,7 +85,7 @@ func (n note) analysisNote(c *content) (*article, error) {
 	}, nil
 }
 
-func (n note) getAllNotes() ([]article, error) {
+func (n noteImpl) getAllNotes() ([]article, error) {
 	var s sync.WaitGroup
 	var errs = make([]error, len(n.Paths))
 	var articles = make([]article, len(n.Paths))
