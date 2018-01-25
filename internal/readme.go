@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"strconv"
 	"sort"
+	"strconv"
 )
 
 func convertIssueToList(i article, config conf) string {
