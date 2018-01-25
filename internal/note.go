@@ -68,7 +68,7 @@ func (n noteImpl) analysisNote(c *content) (*article, error) {
 	var createTime time.Time
 	for _, v := range ts {
 		if strings.HasPrefix(v, "- time ") {
-			t, err := time.Parse(time.RFC3339, string(strings.TrimLeft(v, "- time "))+"T15:04:05Z")
+			t, err := time.Parse(time.RFC3339, strings.TrimLeft(v, " -time")+"T15:04:05Z")
 			if err != nil {
 				return nil, err
 			}
@@ -90,12 +90,12 @@ func (n noteImpl) getAllNotes() ([]article, error) {
 	var errs = make([]error, len(n.Paths))
 	var articles = make([]article, len(n.Paths))
 
-	for k, v := range n.Paths {
+	for k := range n.Paths {
 		s.Add(1)
 		go func(i int) {
 			defer s.Done()
 
-			c, err := n.download(v)
+			c, err := n.download(n.Paths[i])
 			if err != nil {
 				errs[i] = err
 				return
