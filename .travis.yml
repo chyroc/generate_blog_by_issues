@@ -9,6 +9,8 @@ before_install:
   - go get github.com/mattn/goveralls
   - go get -u github.com/alecthomas/gometalinter
   - gometalinter --install
+  - go run cmd/github_css.go
+  - go generate cmd/github_css.go
   - go test -i $(go list ./... | grep -v /vendor)
 
 script:
