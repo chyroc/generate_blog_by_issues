@@ -10,13 +10,15 @@ before_install:
   - go get -u github.com/alecthomas/gometalinter
   - go get -u github.com/jteeuwen/go-bindata/...
   - gometalinter --install
+
+script:
+# lint
+  - gometalinter --config=test/golint_config.json ./...
+  - goveralls -service=travis-ci
+#  test
   - go run cmd/github_css.go
   - go generate cmd/github_css.go
   - go test -i $(go list ./... | grep -v /vendor)
-
-script:
-  - gometalinter --config=test/golint_config.json ./...
-  - goveralls -service=travis-ci
 
 notifications:
   email:
