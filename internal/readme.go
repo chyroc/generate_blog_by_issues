@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func convertIssueToList(i issue, config conf) string {
+func convertIssueToList(i article, config conf) string {
 	return fmt.Sprintf("\n- [%s](http://%s)\n", i.Title, config.Host+"/"+formatFileNmae(i))
 }
 
@@ -19,13 +19,13 @@ func convertBlogrollList(bs []blogroll) string {
 	return blogroll
 }
 
-func groupIssues(issues []issue) [][]issue {
+func groupIssues(issues []article) [][]article {
 	if len(issues) == 0 {
 		log.Fatal("must have one issue")
 	}
 
-	var is [][]issue
-	var currentIssues []issue
+	var is [][]article
+	var currentIssues []article
 	var currentTime = strconv.Itoa(issues[0].CreatedAt.Year()) + "-" + strconv.Itoa(int(issues[0].CreatedAt.Month()))
 	for _, i := range issues {
 		t := strconv.Itoa(i.CreatedAt.Year()) + "-" + strconv.Itoa(int(i.CreatedAt.Month()))
@@ -34,14 +34,14 @@ func groupIssues(issues []issue) [][]issue {
 		} else {
 			currentTime = t
 			is = append(is, currentIssues)
-			currentIssues = []issue{i}
+			currentIssues = []article{i}
 		}
 	}
 	is = append(is, currentIssues)
 	return is
 }
 
-func (g *generateBlog) saveReadme(issues []issue) {
+func (g *generateBlog) saveReadme(issues []article) {
 	readme := fmt.Sprintf("%s\n> created by issue\n\n", g.config.Name)
 
 	groupIss := groupIssues(issues)
