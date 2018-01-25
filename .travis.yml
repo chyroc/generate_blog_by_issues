@@ -18,6 +18,7 @@ script:
 #  test
   - go run cmd/github_css.go
   - go generate cmd/github_css.go
+  - go build main.go
   - go test -i $(go list ./... | grep -v /vendor)
 
 notifications:
