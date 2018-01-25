@@ -59,30 +59,37 @@ func (n noteImpl) download(path string) (*content, error) {
 }
 
 func (n noteImpl) analysisNote(c *content) (*article, error) {
+	article := &article{
+		ID: encodeBase64(c.Name),
+	}
+
 	note, err := decodeBase64(c.Content)
 	if err != nil {
 		return nil, err
 	}
 
+	var newArticleSlice []string
+
 	ts := strings.Split(string(note), "\n")
-	var createTime time.Time
-	for _, v := range ts {
+	for k, v := range ts {
+		if k == 0 {
+			article.Title = v[2:]
+			newArticleSlice = append(newArticleSlice, v)
+			continue
+		}
 		if strings.HasPrefix(v, "- time ") {
-			t, err := time.Parse(time.RFC3339, strings.TrimLeft(v, " -time")+"T15:04:05Z")
+			article.CreatedAt, err = time.Parse(time.RFC3339, strings.TrimLeft(v, " -time")+"T15:04:05Z")
 			if err != nil {
 				return nil, err
 			}
-			createTime = t
-			break
+			continue
 		}
-	}
 
-	return &article{
-		ID:        encodeBase64(c.Name),
-		Title:     c.Name,
-		Body:      string(note),
-		CreatedAt: createTime,
-	}, nil
+		newArticleSlice = append(newArticleSlice, v)
+	}
+	article.Body = strings.Join(newArticleSlice, "\n")
+
+	return article, nil
 }
 
 func (n noteImpl) getAllNotes() ([]article, error) {
