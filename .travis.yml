@@ -8,6 +8,7 @@ go:
 before_install:
   - go get github.com/mattn/goveralls
   - go get -u github.com/alecthomas/gometalinter
+  - go get -u github.com/jteeuwen/go-bindata/...
   - gometalinter --install
   - go run cmd/github_css.go
   - go generate cmd/github_css.go
