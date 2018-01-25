@@ -13,6 +13,5 @@
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
 .idea/
-internal/assets.go
 dist
 assets/github_markdown.css
