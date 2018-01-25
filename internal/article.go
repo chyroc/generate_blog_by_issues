@@ -2,17 +2,24 @@ package internal
 
 import (
 	"log"
-	"strconv"
+	"time"
 )
 
-func formatFileNmae(i issue) string {
-	return "articles/" + formatTime(i.CreatedAt) + "-" + strconv.Itoa(i.ID) + ".html"
+type article struct {
+	ID        string    `json:"id"`
+	Title     string    `json:"title"`
+	Body      string    `json:"body"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
-func (g *generateBlog) saveArticle(issues []issue) {
+func formatFileNmae(i article) string {
+	return "articles/" + formatTime(i.CreatedAt) + "-" + i.ID + ".html"
+}
+
+func (g *generateBlog) saveArticle(issues []article) {
 	for k, i := range issues {
-		go func(k int, i issue) {
-			log.Printf("start fetch %d: %s\n", k, i.Title)
+		go func(k int, i article) {
+			log.Printf("start fetch %d:\t%s\n", k, i.Title)
 
 			defer g.wg.Done()
 

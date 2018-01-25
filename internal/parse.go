@@ -20,9 +20,11 @@ type conf struct {
 	Name      string     `json:"name"`
 	Host      string     `json:"host"`
 	Author    string     `json:"author"`
+	Notes     []note     `json:"notes"`
 	Blogrolls []blogroll `json:"blogrolls"`
 	Blogroll  string     `json:"blogroll"`
-	Content   string     `json:"content"`
+
+	Content string `json:"content"`
 }
 
 func formatTime(t time.Time) string {
