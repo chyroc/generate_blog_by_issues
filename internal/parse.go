@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"html"
 	"html/template"
-	"io/ioutil"
 	"strconv"
 	"time"
 )
@@ -85,8 +84,4 @@ func parseToArticle(title, issueBody, token string, config conf) (string, error)
 	}
 
 	return html.UnescapeString(doc.String()), nil
-}
-
-func saveFile(filename, html string) error {
-	return ioutil.WriteFile(filename, []byte(html), 0644)
 }
