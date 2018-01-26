@@ -14,7 +14,7 @@ func CreateAssets() {
 
 	filename := "./assets/css/style.css"
 
-	if err := ioutil.WriteFile(filename, MustAsset("../assets/style.css"), 0644); err != nil {
+	if err := ioutil.WriteFile(filename, MustAsset("../../assets/style.css"), 0644); err != nil {
 		log.Fatal(err)
 	}
 
@@ -28,7 +28,7 @@ func CreateAssets() {
 		log.Fatal(err)
 	}
 
-	if _, err = f.Write(MustAsset("../assets/github_markdown.css")); err != nil {
+	if _, err = f.Write(MustAsset("../../assets/github_markdown.css")); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -15,8 +15,8 @@ script:
 # lint
   - gometalinter --config=test/golint_config.json ./...
 #  test
-  - go run cmd/github_css.go
-  - go generate cmd/github_css.go
+  - go run internal/cmd/github_css.go
+  - go generate internal/cmd/github_css.go
   - go build main.go
   - go test -i $(go list ./... | grep -v /vendor)
 
