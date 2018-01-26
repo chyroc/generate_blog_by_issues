@@ -1,10 +1,10 @@
 package internal
 
 import (
-	"log"
-	"time"
 	"io/ioutil"
+	"log"
 	"os"
+	"time"
 )
 
 var articlesDir = "articles"
