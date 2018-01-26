@@ -1,5 +1,7 @@
 package common
 
-// ArticlesDir ArticlesDir
-const ArticlesDir = "articles"
-const MarkdownsDir = "_md"
+// const
+const (
+	ArticlesDir  = "articles"
+	MarkdownsDir = "_md"
+)
