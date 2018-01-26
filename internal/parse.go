@@ -11,6 +11,8 @@ import (
 	"io/ioutil"
 	"log"
 	"strconv"
+	"os"
+	"github.com/Chyroc/generate_blog_by_issues/internal/common"
 )
 
 type blogroll struct {
@@ -134,16 +136,15 @@ func (g generateBlog) AsyncToLocalHTML(as []files.Article) {
 }
 
 func (g generateBlog) AsyncToLocalMD(as []files.Article) {
+	if err := os.MkdirAll(common.MarkdownsDir, 0700); err != nil {
+		log.Fatal(err)
+	}
+
 	for k, i := range as {
 		go func(k int, i files.Article) {
 			defer g.wg.Done()
 
 			log.Printf("start fetch %d:\t%s\n", k, i.Title)
-
-			//html2, err := parseToArticle(i.Title, i.Body, g.token, g.config)
-			//if err != nil {
-			//	log.Fatal(err)
-			//}
 
 			if err := files.SaveFile(files.FormatMDFileNmae(i), i.Body); err != nil {
 				log.Fatal(err)

@@ -31,17 +31,13 @@ func getCommandLine() (string, string, bool, []byte) {
 	if *token == "" {
 		log.Fatal("must set github token")
 	}
+	if *config == "" {
+		log.Fatal("must set json config file")
+	}
 
-	var file []byte
-	if !*async {
-		if *config == "" {
-			log.Fatal("must set json config file")
-		}
-		var err error
-		file, err = ioutil.ReadFile(*config)
-		if err != nil {
-			log.Fatal(err)
-		}
+	file, err := ioutil.ReadFile(*config)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	return *repo, *token, *async, file

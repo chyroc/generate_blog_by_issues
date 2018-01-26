@@ -19,18 +19,18 @@ type Article struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-func formatTime(t time.Time) string {
-	return strconv.Itoa(t.Year()) + "-" + strconv.Itoa(int(t.Month())) + "-" + strconv.Itoa(t.Day())
+func formatFileName(dir string, t time.Time, id, end string) string {
+	return dir + "/" + strconv.Itoa(t.Year()) + "-" + strconv.Itoa(int(t.Month())) + "-" + strconv.Itoa(t.Day()) + "-" + id + "." + end
 }
 
 // FormatHTMLFileNmae FormatHTMLFileNmae
 func FormatHTMLFileNmae(i Article) string {
-	return common.ArticlesDir + "/" + formatTime(i.CreatedAt) + "-" + i.ID + ".html"
+	return formatFileName(common.ArticlesDir, i.CreatedAt, i.ID, "html")
 }
 
 // FormatMDFileNmae FormatMDFileNmae
 func FormatMDFileNmae(i Article) string {
-	return common.MarkdownsDir + "/" + formatTime(i.CreatedAt) + "-" + i.ID + ".html"
+	return formatFileName(common.MarkdownsDir, i.CreatedAt, i.ID, "md")
 }
 
 // SaveFile SaveFile
