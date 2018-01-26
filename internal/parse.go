@@ -36,7 +36,7 @@ type conf struct {
 }
 
 func convertIssueToList(i files.Article, config conf) string {
-	return fmt.Sprintf("\n- [%s](http://%s)\n", i.Title, config.Host+"/"+files.FormatFileNmae(i))
+	return fmt.Sprintf("\n- [%s](http://%s)\n", i.Title, config.Host+"/"+files.FormatHTMLFileNmae(i))
 }
 
 func convertBlogrollList(bs []blogroll) string {
@@ -117,29 +117,37 @@ func (g generateBlog) AsyncToLocalHTML(as []files.Article) {
 
 	for k, i := range as {
 		go func(k int, i files.Article) {
-			log.Printf("start fetch %d:\t%s\n", k, i.Title)
-
 			defer g.wg.Done()
+
+			log.Printf("start fetch %d:\t%s\n", k, i.Title)
 
 			html2, err := parseToArticle(i.Title, i.Body, g.token, g.config)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			if err := files.SaveFile(files.FormatFileNmae(i), html2); err != nil {
+			if err := files.SaveFile(files.FormatHTMLFileNmae(i), html2); err != nil {
 				log.Fatal(err)
 			}
 		}(k, i)
 	}
 }
 
-func (g generateBlog) AsyncToGithubIssue(as []files.Article) {
+func (g generateBlog) AsyncToLocalMD(as []files.Article) {
 	for k, i := range as {
 		go func(k int, i files.Article) {
-			log.Printf("start fetch %d:\t%s\n", k, i.Title)
-
 			defer g.wg.Done()
 
+			log.Printf("start fetch %d:\t%s\n", k, i.Title)
+
+			//html2, err := parseToArticle(i.Title, i.Body, g.token, g.config)
+			//if err != nil {
+			//	log.Fatal(err)
+			//}
+
+			if err := files.SaveFile(files.FormatMDFileNmae(i), i.Body); err != nil {
+				log.Fatal(err)
+			}
 		}(k, i)
 	}
 }

@@ -23,9 +23,14 @@ func formatTime(t time.Time) string {
 	return strconv.Itoa(t.Year()) + "-" + strconv.Itoa(int(t.Month())) + "-" + strconv.Itoa(t.Day())
 }
 
-// FormatFileNmae FormatFileNmae
-func FormatFileNmae(i Article) string {
+// FormatHTMLFileNmae FormatHTMLFileNmae
+func FormatHTMLFileNmae(i Article) string {
 	return common.ArticlesDir + "/" + formatTime(i.CreatedAt) + "-" + i.ID + ".html"
+}
+
+// FormatMDFileNmae FormatMDFileNmae
+func FormatMDFileNmae(i Article) string {
+	return common.MarkdownsDir + "/" + formatTime(i.CreatedAt) + "-" + i.ID + ".html"
 }
 
 // SaveFile SaveFile

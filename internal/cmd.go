@@ -14,8 +14,8 @@ type generateBlog struct {
 	token  string
 	config conf
 
-	issueImpl github.Issue
-	noteImpls []github.Note
+	issue github.Issue
+	notes []github.Note
 
 	wg *sync.WaitGroup
 }
@@ -30,8 +30,8 @@ func newBlog(repo, token string, configFile []byte) *generateBlog {
 	for _, v := range config.Notes {
 		ns = append(ns, github.Note{
 			Repo:  v.Repo,
-			Token: token,
 			Paths: v.Paths,
+			Token: token,
 		})
 	}
 	return &generateBlog{
@@ -39,8 +39,8 @@ func newBlog(repo, token string, configFile []byte) *generateBlog {
 		token:  token,
 		config: config,
 
-		issueImpl: github.Issue{Repo: repo, Token: token},
-		noteImpls: ns,
+		issue: github.Issue{Repo: repo, Token: token},
+		notes: ns,
 
 		wg: new(sync.WaitGroup),
 	}
@@ -52,13 +52,13 @@ func Run(repo, token string, configFile []byte) {
 
 	var articles []files.Article
 
-	issueArticles, err := g.issueImpl.GetAllIssues()
+	issueArticles, err := g.issue.GetAllIssues()
 	if err != nil {
 		log.Fatal(err)
 	}
 	articles = append(articles, issueArticles...)
 
-	for _, n := range g.noteImpls {
+	for _, n := range g.notes {
 		noteArticles, err := n.GetAllNotes()
 		if err != nil {
 			log.Fatal(err)
@@ -66,24 +66,24 @@ func Run(repo, token string, configFile []byte) {
 		articles = append(articles, noteArticles...)
 	}
 
-	files.CreateAssets()
-
 	g.wg.Add(len(articles))
 	g.AsyncToLocalHTML(articles)
 	g.saveReadme(articles)
 	g.wg.Wait()
+
+	files.CreateAssets()
 }
 
 // Async fetch issues and save files
 func Async(repo, token string, configFile []byte) {
 	g := newBlog(repo, token, configFile)
 
-	articles, err := g.issueImpl.GetAllIssues()
+	articles, err := g.issue.GetAllIssues()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	g.wg.Add(len(articles))
-	g.AsyncToGithubIssue(articles)
+	g.AsyncToLocalMD(articles)
 	g.wg.Wait()
 }
