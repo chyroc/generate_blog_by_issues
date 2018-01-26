@@ -1,4 +1,4 @@
-package internal
+package common
 
 import (
 	"bytes"
@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func get(url, token string, queryString map[string]string) (*http.Response, error) {
+func Get(url, token string, queryString map[string]string) (*http.Response, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
@@ -26,7 +26,7 @@ func get(url, token string, queryString map[string]string) (*http.Response, erro
 	return client.Do(req)
 }
 
-func post(url, token string, body []byte) ([]byte, error) {
+func Post(url, token string, body []byte) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
 	if err != nil {
 		return nil, err

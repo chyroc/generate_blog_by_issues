@@ -1,4 +1,4 @@
-//go:generate go-bindata -pkg internal -o ../internal/assets.go ../assets/github_markdown.css ../assets/style.css
+//go:generate go-bindata -pkg files -o ../internal/files/assets.go ../assets/github_markdown.css ../assets/style.css
 package main
 
 import (

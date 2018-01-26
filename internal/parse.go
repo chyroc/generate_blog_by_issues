@@ -2,16 +2,29 @@ package internal
 
 import (
 	"bytes"
-	"encoding/json"
-	"html"
+	"log"
 	"html/template"
+	"sync"
+	"html"
+
+	"github.com/Chyroc/generate_blog_by_issues/internal/github"
+	"github.com/Chyroc/generate_blog_by_issues/internal/blog"
+	"github.com/Chyroc/generate_blog_by_issues/internal/files"
+	"fmt"
 	"strconv"
-	"time"
+	"io/ioutil"
 )
+
+var wg sync.WaitGroup
 
 type blogroll struct {
 	Name string `json:"name"`
 	URL  string `json:"url"`
+}
+
+type note struct {
+	Repo  string   `json:"repo"`
+	Paths []string `json:"paths"`
 }
 
 type conf struct {
@@ -26,41 +39,35 @@ type conf struct {
 	Content string `json:"content"`
 }
 
-func formatTime(t time.Time) string {
-	return strconv.Itoa(t.Year()) + "-" + strconv.Itoa(int(t.Month())) + "-" + strconv.Itoa(t.Day())
+func convertIssueToList(i files.Article, config conf) string {
+	return fmt.Sprintf("\n- [%s](http://%s)\n", i.Title, config.Host+"/"+files.FormatFileNmae(i))
 }
 
-func parseToHTML(issueBody, token string) (string, error) {
-	body, err := json.Marshal(map[string]string{"text": issueBody})
-	if err != nil {
-		return "", err
+func convertBlogrollList(bs []blogroll) string {
+	blogroll := ""
+	for _, b := range bs {
+		blogroll += fmt.Sprintf("\n- [%s](%s)", b.Name, b.URL)
 	}
-
-	htmlBody, err := post("https://api.github.com/markdown", token, body)
-	if err != nil {
-		return "", err
-	}
-
-	return string(htmlBody), nil
+	return blogroll
 }
 
 func parseToReadme(issueBody, blogroll, token string, config conf) (string, error) {
 	config.Title = config.Name
 
-	htmlBody, err := parseToHTML(issueBody, token)
+	htmlBody, err := github.MarkdownToHTML(issueBody, token)
 	if err != nil {
 		return "", err
 	}
 	config.Content = htmlBody
 
-	blogrollBody, err := parseToHTML(blogroll, token)
+	blogrollBody, err := github.MarkdownToHTML(blogroll, token)
 	if err != nil {
 		return "", err
 	}
 	config.Blogroll = blogrollBody
 
 	var doc bytes.Buffer
-	t := template.Must(template.New("readmeTmpl").Parse(readmeTmpl))
+	t := template.Must(template.New("readmeTmpl").Parse(blog.TmplReadme))
 	if err := t.Execute(&doc, config); err != nil {
 		return "", err
 	}
@@ -71,17 +78,72 @@ func parseToReadme(issueBody, blogroll, token string, config conf) (string, erro
 func parseToArticle(title, issueBody, token string, config conf) (string, error) {
 	config.Title = title + " - " + config.Name
 
-	htmlBody, err := parseToHTML(issueBody, token)
+	htmlBody, err := github.MarkdownToHTML(issueBody, token)
 	if err != nil {
 		return "", err
 	}
 	config.Content = htmlBody
 
 	var doc bytes.Buffer
-	t := template.Must(template.New("articleTmpl").Parse(articleTmpl))
+	t := template.Must(template.New("articleTmpl").Parse(blog.TmplArticle))
 	if err := t.Execute(&doc, config); err != nil {
 		return "", err
 	}
 
 	return html.UnescapeString(doc.String()), nil
+}
+
+func (g generateBlog) saveReadme(articles []files.Article) {
+	readme := fmt.Sprintf("%s\n> created by issue\n\n", g.config.Name)
+
+	groupIss := files.GroupArticles(articles)
+	for _, iss := range groupIss {
+		readme += fmt.Sprintf("\n### %s", strconv.Itoa(iss[0].CreatedAt.Year())+"-"+strconv.Itoa(int(iss[0].CreatedAt.Month())))
+		for _, i := range iss {
+			readme += convertIssueToList(i, g.config)
+		}
+	}
+
+	blogroll := convertBlogrollList(g.config.Blogrolls)
+
+	readme, err := parseToReadme(readme, blogroll, g.token, g.config)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ioutil.WriteFile("index.html", []byte(readme), 0644)
+}
+
+func (g generateBlog) AsyncToLocalHTML(as []files.Article) {
+	if err := files.ResetArticlesDir(); err != nil {
+		log.Fatal(err)
+	}
+
+	for k, i := range as {
+		go func(k int, i files.Article) {
+			log.Printf("start fetch %d:\t%s\n", k, i.Title)
+
+			defer wg.Done()
+
+			html2, err := parseToArticle(i.Title, i.Body, g.token, g.config)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			if err := files.SaveFile(files.FormatFileNmae(i), html2); err != nil {
+				log.Fatal(err)
+			}
+		}(k, i)
+	}
+}
+
+func (g generateBlog) AsyncToGithubIssue(as []files.Article) {
+	for k, i := range as {
+		go func(k int, i files.Article) {
+			log.Printf("start fetch %d:\t%s\n", k, i.Title)
+
+			defer wg.Done()
+
+		}(k, i)
+	}
 }

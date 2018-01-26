@@ -1,4 +1,4 @@
-package internal
+package blog
 
 const headerTmpl = `
 <!DOCTYPE html>
@@ -20,7 +20,7 @@ const headerTmpl = `
 <!-- End Jekyll SEO tag -->
 `
 
-const articleTmpl = headerTmpl + `
+const TmplArticle = headerTmpl + `
 <link href="http://{{ .Host }}/assets/css/style.css" rel="stylesheet">
 </head>
 <body>
@@ -34,7 +34,7 @@ const articleTmpl = headerTmpl + `
 </html>
 `
 
-const readmeTmpl = headerTmpl + `
+const TmplReadme = headerTmpl + `
 <style>
 .tab {
     overflow: hidden;

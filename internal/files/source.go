@@ -1,4 +1,4 @@
-package internal
+package files
 
 import (
 	"io/ioutil"
@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func createAssets() {
+func CreateAssets() {
 	if err := os.MkdirAll("./assets/css", 0700); err != nil {
 		log.Fatal(err)
 	}

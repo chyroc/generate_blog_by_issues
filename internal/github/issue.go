@@ -1,4 +1,4 @@
-package internal
+package github
 
 import (
 	"encoding/json"
@@ -6,6 +6,9 @@ import (
 	"regexp"
 	"strconv"
 	"time"
+
+	"github.com/Chyroc/generate_blog_by_issues/internal/files"
+	"github.com/Chyroc/generate_blog_by_issues/internal/common"
 )
 
 type labels struct {
@@ -22,8 +25,21 @@ type issue struct {
 	Labels    []*labels `json:"labels"`
 }
 
-func (i issue) toArticle() article {
-	return article{
+type issueInterface interface {
+	getIssuesByPage(page int) ([]issue, error)
+	getIssuesPage() (int, error)
+	getAllIssues() ([]files.Article, error)
+}
+
+type Issue struct {
+	Repo  string
+	Token string
+}
+
+var linkReg = regexp.MustCompile(`rel="next"(.*?)page=(\d*)&per_page=(.*?)rel="last"`)
+
+func (i issue) toArticle() files.Article {
+	return files.Article{
 		ID:        strconv.Itoa(i.ID),
 		Title:     i.Title,
 		Body:      i.Body,
@@ -31,20 +47,13 @@ func (i issue) toArticle() article {
 	}
 }
 
-type issueImpl struct {
-	repo  string
-	token string
-}
-
-var linkReg = regexp.MustCompile(`rel="next"(.*?)page=(\d*)&per_page=(.*?)rel="last"`)
-
 func repoToIssueURL(repo string) string {
-	return "https://api.github.com/repos/" + linkToGithubRepoName(repo) + "/issues"
+	return "https://api.github.com/repos/" + common.LinkToGithubRepoName(repo) + "/issues"
 }
 
-func getIssuesByPage(repo string, page int, token string) ([]issue, error) {
-	repo = repoToIssueURL(repo)
-	resp, err := get(repo, token, map[string]string{"state": "open", "page": strconv.Itoa(page), "per_page": "25"})
+func (g Issue) getIssuesByPage(page int) ([]issue, error) {
+	repo := repoToIssueURL(g.Repo)
+	resp, err := common.Get(repo, g.Token, map[string]string{"state": "open", "page": strconv.Itoa(page), "per_page": "25"})
 	if err != nil {
 		return nil, err
 	}
@@ -63,11 +72,11 @@ func getIssuesByPage(repo string, page int, token string) ([]issue, error) {
 	return issues, nil
 }
 
-func getIssuesPage(repo, token string) (int, error) {
+func (g Issue) getIssuesPage() (int, error) {
 	page := 1
 
-	repo = repoToIssueURL(repo)
-	resp, err := get(repo, token, map[string]string{"state": "open", "page": strconv.Itoa(1), "per_page": "25"})
+	repo := repoToIssueURL(g.Repo)
+	resp, err := common.Get(repo, g.Token, map[string]string{"state": "open", "page": strconv.Itoa(1), "per_page": "25"})
 	if err != nil {
 		return page, err
 	}
@@ -87,16 +96,16 @@ func getIssuesPage(repo, token string) (int, error) {
 	return page, nil
 }
 
-func (g issueImpl) getAllIssues() ([]article, error) {
-	issues := make([]article, 0)
+func (g Issue) GetAllIssues() ([]files.Article, error) {
+	issues := make([]files.Article, 0)
 
-	page, err := getIssuesPage(g.repo, g.token)
+	page, err := g.getIssuesPage()
 	if err != nil {
 		return nil, err
 	}
 
 	for i := 1; i < page+1; i++ {
-		newIssues, err := getIssuesByPage(g.repo, i, g.token)
+		newIssues, err := g.getIssuesByPage(i)
 		if err != nil {
 			return nil, err
 		}

@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"log"
 	"sync"
+
+	"github.com/Chyroc/generate_blog_by_issues/internal/files"
+	"github.com/Chyroc/generate_blog_by_issues/internal/github"
 )
 
 type generateBlog struct {
@@ -11,8 +14,8 @@ type generateBlog struct {
 	token  string
 	config conf
 
-	issueImpl issueImpl
-	noteImpls []noteImpl
+	issueImpl github.Issue
+	noteImpls []github.Note
 
 	wg *sync.WaitGroup
 }
@@ -23,9 +26,9 @@ func newBlog(repo, token string, configFile []byte) *generateBlog {
 		log.Fatal(err)
 	}
 
-	var ns []noteImpl
+	var ns []github.Note
 	for _, v := range config.Notes {
-		ns = append(ns, noteImpl{
+		ns = append(ns, github.Note{
 			Repo:  v.Repo,
 			Token: token,
 			Paths: v.Paths,
@@ -36,7 +39,7 @@ func newBlog(repo, token string, configFile []byte) *generateBlog {
 		token:  token,
 		config: config,
 
-		issueImpl: issueImpl{repo: repo, token: token},
+		issueImpl: github.Issue{Repo: repo, Token: token},
 		noteImpls: ns,
 
 		wg: new(sync.WaitGroup),
@@ -47,16 +50,16 @@ func newBlog(repo, token string, configFile []byte) *generateBlog {
 func Run(repo, token string, configFile []byte) {
 	g := newBlog(repo, token, configFile)
 
-	var articles []article
+	var articles []files.Article
 
-	issueArticles, err := g.issueImpl.getAllIssues()
+	issueArticles, err := g.issueImpl.GetAllIssues()
 	if err != nil {
 		log.Fatal(err)
 	}
 	articles = append(articles, issueArticles...)
 
 	for _, n := range g.noteImpls {
-		noteArticles, err := n.getAllNotes()
+		noteArticles, err := n.GetAllNotes()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -64,10 +67,10 @@ func Run(repo, token string, configFile []byte) {
 	}
 
 	g.wg.Add(len(articles))
-	g.saveArticle(articles)
+	g.AsyncToLocalHTML(articles)
 	g.saveReadme(articles)
 
-	createAssets()
+	files.CreateAssets()
 
 	g.wg.Wait()
 }
@@ -76,16 +79,13 @@ func Run(repo, token string, configFile []byte) {
 func Async(repo, token string, configFile []byte) {
 	g := newBlog(repo, token, configFile)
 
-
-	articles, err := g.issueImpl.getAllIssues()
+	articles, err := g.issueImpl.GetAllIssues()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	g.saveArticle(articles)
-	g.saveReadme(articles)
-
-	createAssets()
+	g.wg.Add(len(articles))
+	g.AsyncToGithubIssue(articles)
 
 	g.wg.Wait()
 }

@@ -1,4 +1,4 @@
-package internal
+package github
 
 import (
 	"encoding/json"
@@ -7,34 +7,37 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/Chyroc/generate_blog_by_issues/internal/files"
+	"github.com/Chyroc/generate_blog_by_issues/internal/common"
 )
 
-type note struct {
-	Repo  string   `json:"repo"`
-	Paths []string `json:"paths"`
-
-	Token string `json:"-"`
-}
 type content struct {
 	Name    string `json:"name"`
 	Content string `json:"content"`
 	Message string `json:"message"`
 }
 
-type noteImpl struct {
-	Repo  string   `json:"repo"`
+type noteInterface interface {
+	download(path string) (*content, error)
+	analysisNote(c *content) (*files.Article, error)
+	getAllNotes() ([]files.Article, error)
+}
+
+type Note struct {
+	Repo  string   `json:"Repo"`
 	Paths []string `json:"paths"`
 
 	Token string `json:"-"`
 }
 
 func repoToContentURL(repo, path string) string {
-	return "https://api.github.com/repos/" + linkToGithubRepoName(repo) + "/contents/" + path
+	return "https://api.github.com/repos/" + common.LinkToGithubRepoName(repo) + "/contents/" + path
 }
 
-func (n noteImpl) download(path string) (*content, error) {
+func (n Note) download(path string) (*content, error) {
 	url := repoToContentURL(n.Repo, path)
-	resp, err := get(url, n.Token, nil)
+	resp, err := common.Get(url, n.Token, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -58,12 +61,12 @@ func (n noteImpl) download(path string) (*content, error) {
 	return &r, nil
 }
 
-func (n noteImpl) analysisNote(c *content) (*article, error) {
-	article := &article{
-		ID: encodeBase64(c.Name),
+func (n Note) analysisNote(c *content) (*files.Article, error) {
+	article := &files.Article{
+		ID: common.EncodeBase64(c.Name),
 	}
 
-	note, err := decodeBase64(c.Content)
+	note, err := common.DecodeBase64(c.Content)
 	if err != nil {
 		return nil, err
 	}
@@ -92,10 +95,10 @@ func (n noteImpl) analysisNote(c *content) (*article, error) {
 	return article, nil
 }
 
-func (n noteImpl) getAllNotes() ([]article, error) {
+func (n Note) GetAllNotes() ([]files.Article, error) {
 	var s sync.WaitGroup
 	var errs = make([]error, len(n.Paths))
-	var articles = make([]article, len(n.Paths))
+	var articles = make([]files.Article, len(n.Paths))
 
 	for k := range n.Paths {
 		s.Add(1)
