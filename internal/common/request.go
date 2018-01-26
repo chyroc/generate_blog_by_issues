@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// Get Get
 func Get(url, token string, queryString map[string]string) (*http.Response, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -26,6 +27,7 @@ func Get(url, token string, queryString map[string]string) (*http.Response, erro
 	return client.Do(req)
 }
 
+// Post Post
 func Post(url, token string, body []byte) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
 	if err != nil {

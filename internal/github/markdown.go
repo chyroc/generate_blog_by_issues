@@ -6,6 +6,7 @@ import (
 	"github.com/Chyroc/generate_blog_by_issues/internal/common"
 )
 
+// MarkdownToHTML MarkdownToHTML
 func MarkdownToHTML(issueBody, token string) (string, error) {
 	body, err := json.Marshal(map[string]string{"text": issueBody})
 	if err != nil {

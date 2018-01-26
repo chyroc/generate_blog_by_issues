@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Chyroc/generate_blog_by_issues/internal/files"
 	"github.com/Chyroc/generate_blog_by_issues/internal/common"
+	"github.com/Chyroc/generate_blog_by_issues/internal/files"
 )
 
 type labels struct {
@@ -28,9 +28,12 @@ type issue struct {
 type issueInterface interface {
 	getIssuesByPage(page int) ([]issue, error)
 	getIssuesPage() (int, error)
-	getAllIssues() ([]files.Article, error)
+	GetAllIssues() ([]files.Article, error)
 }
 
+var _ issueInterface = (*Issue)(nil)
+
+// Issue Issue
 type Issue struct {
 	Repo  string
 	Token string
@@ -96,6 +99,7 @@ func (g Issue) getIssuesPage() (int, error) {
 	return page, nil
 }
 
+// GetAllIssues GetAllIssues
 func (g Issue) GetAllIssues() ([]files.Article, error) {
 	issues := make([]files.Article, 0)
 

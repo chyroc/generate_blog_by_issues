@@ -16,3 +16,4 @@
 dist
 assets/github_markdown.css
 generate_blog_by_issues
+build

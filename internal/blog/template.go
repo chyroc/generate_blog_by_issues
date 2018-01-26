@@ -20,6 +20,7 @@ const headerTmpl = `
 <!-- End Jekyll SEO tag -->
 `
 
+// TmplArticle TmplArticle
 const TmplArticle = headerTmpl + `
 <link href="http://{{ .Host }}/assets/css/style.css" rel="stylesheet">
 </head>
@@ -34,6 +35,7 @@ const TmplArticle = headerTmpl + `
 </html>
 `
 
+// TmplReadme TmplReadme
 const TmplReadme = headerTmpl + `
 <style>
 .tab {

@@ -66,12 +66,11 @@ func Run(repo, token string, configFile []byte) {
 		articles = append(articles, noteArticles...)
 	}
 
+	files.CreateAssets()
+
 	g.wg.Add(len(articles))
 	g.AsyncToLocalHTML(articles)
 	g.saveReadme(articles)
-
-	files.CreateAssets()
-
 	g.wg.Wait()
 }
 
@@ -86,6 +85,5 @@ func Async(repo, token string, configFile []byte) {
 
 	g.wg.Add(len(articles))
 	g.AsyncToGithubIssue(articles)
-
 	g.wg.Wait()
 }

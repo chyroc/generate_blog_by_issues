@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// CreateAssets CreateAssets
 func CreateAssets() {
 	if err := os.MkdirAll("./assets/css", 0700); err != nil {
 		log.Fatal(err)

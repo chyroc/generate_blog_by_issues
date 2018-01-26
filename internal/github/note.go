@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Chyroc/generate_blog_by_issues/internal/files"
 	"github.com/Chyroc/generate_blog_by_issues/internal/common"
+	"github.com/Chyroc/generate_blog_by_issues/internal/files"
 )
 
 type content struct {
@@ -21,9 +21,12 @@ type content struct {
 type noteInterface interface {
 	download(path string) (*content, error)
 	analysisNote(c *content) (*files.Article, error)
-	getAllNotes() ([]files.Article, error)
+	GetAllNotes() ([]files.Article, error)
 }
 
+var _ noteInterface = (*Note)(nil)
+
+// Note Note
 type Note struct {
 	Repo  string   `json:"Repo"`
 	Paths []string `json:"paths"`
@@ -95,6 +98,7 @@ func (n Note) analysisNote(c *content) (*files.Article, error) {
 	return article, nil
 }
 
+// GetAllNotes GetAllNotes
 func (n Note) GetAllNotes() ([]files.Article, error) {
 	var s sync.WaitGroup
 	var errs = make([]error, len(n.Paths))

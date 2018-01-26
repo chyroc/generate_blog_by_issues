@@ -2,15 +2,16 @@ package files
 
 import (
 	"io/ioutil"
-	"os"
-	"time"
-	"strconv"
 	"log"
+	"os"
 	"sort"
+	"strconv"
+	"time"
 
 	"github.com/Chyroc/generate_blog_by_issues/internal/common"
 )
 
+// Article Article
 type Article struct {
 	ID        string    `json:"id"`
 	Title     string    `json:"title"`
@@ -22,14 +23,17 @@ func formatTime(t time.Time) string {
 	return strconv.Itoa(t.Year()) + "-" + strconv.Itoa(int(t.Month())) + "-" + strconv.Itoa(t.Day())
 }
 
+// FormatFileNmae FormatFileNmae
 func FormatFileNmae(i Article) string {
 	return common.ArticlesDir + "/" + formatTime(i.CreatedAt) + "-" + i.ID + ".html"
 }
 
+// SaveFile SaveFile
 func SaveFile(filename, body string) error {
 	return ioutil.WriteFile(filename, []byte(body), 0644)
 }
 
+// ResetArticlesDir ResetArticlesDir
 func ResetArticlesDir() error {
 	err := os.RemoveAll(common.ArticlesDir)
 	if err != nil {
@@ -51,6 +55,7 @@ func (c articleSlice) Less(i, j int) bool {
 	return c[j].CreatedAt.Before(c[i].CreatedAt)
 }
 
+// GroupArticles GroupArticles
 func GroupArticles(articles []Article) [][]Article {
 	if len(articles) == 0 {
 		log.Fatal("must have one issue")

@@ -2,20 +2,16 @@ package internal
 
 import (
 	"bytes"
-	"log"
-	"html/template"
-	"sync"
-	"html"
-
-	"github.com/Chyroc/generate_blog_by_issues/internal/github"
+	"fmt"
 	"github.com/Chyroc/generate_blog_by_issues/internal/blog"
 	"github.com/Chyroc/generate_blog_by_issues/internal/files"
-	"fmt"
-	"strconv"
+	"github.com/Chyroc/generate_blog_by_issues/internal/github"
+	"html"
+	"html/template"
 	"io/ioutil"
+	"log"
+	"strconv"
 )
-
-var wg sync.WaitGroup
 
 type blogroll struct {
 	Name string `json:"name"`
@@ -123,7 +119,7 @@ func (g generateBlog) AsyncToLocalHTML(as []files.Article) {
 		go func(k int, i files.Article) {
 			log.Printf("start fetch %d:\t%s\n", k, i.Title)
 
-			defer wg.Done()
+			defer g.wg.Done()
 
 			html2, err := parseToArticle(i.Title, i.Body, g.token, g.config)
 			if err != nil {
@@ -142,7 +138,7 @@ func (g generateBlog) AsyncToGithubIssue(as []files.Article) {
 		go func(k int, i files.Article) {
 			log.Printf("start fetch %d:\t%s\n", k, i.Title)
 
-			defer wg.Done()
+			defer g.wg.Done()
 
 		}(k, i)
 	}
