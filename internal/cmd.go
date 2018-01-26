@@ -71,3 +71,21 @@ func Run(repo, token string, configFile []byte) {
 
 	g.wg.Wait()
 }
+
+// Async fetch issues and save files
+func Async(repo, token string, configFile []byte) {
+	g := newBlog(repo, token, configFile)
+
+
+	articles, err := g.issueImpl.getAllIssues()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	g.saveArticle(articles)
+	g.saveReadme(articles)
+
+	createAssets()
+
+	g.wg.Wait()
+}

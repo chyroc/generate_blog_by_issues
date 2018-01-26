@@ -12,11 +12,12 @@ import (
 
 var version = "v0.3.0"
 
-func getCommandLine() (string, string, []byte) {
+func getCommandLine() (string, string, bool, []byte) {
 	repo := flag.String("repo", "", "where the repo is")
 	token := flag.String("token", "", "github token")
 	config := flag.String("config", "", "json config file")
 	v := flag.Bool("v", false, "generate_blog_by_issues version")
+	async := flag.Bool("async", false, "async from issues")
 	flag.Parse()
 
 	if *v {
@@ -30,18 +31,27 @@ func getCommandLine() (string, string, []byte) {
 	if *token == "" {
 		log.Fatal("must set github token")
 	}
-	if *config == "" {
-		log.Fatal("must set json config file")
-	}
-	file, err := ioutil.ReadFile(*config)
-	if err != nil {
-		log.Fatal(err)
+
+	var file []byte
+	if !*async {
+		if *config == "" {
+			log.Fatal("must set json config file")
+		}
+		var err error
+		file, err = ioutil.ReadFile(*config)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
-	return *repo, *token, file
+	return *repo, *token, *async, file
 }
 
 func main() {
-	repo, token, config := getCommandLine()
+	repo, token, async, config := getCommandLine()
+	if async {
+		internal.Async(repo, token, config)
+		os.Exit(0)
+	}
 	internal.Run(repo, token, config)
 }
